@@ -1,0 +1,25 @@
+{
+    "name": "calocom-lang",
+    "displayName": "Calocom Lang",
+    "description": "Calocom language support for vscode.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.66.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "calocom",
+            "aliases": ["Calocom", "calocom"],
+            "extensions": [".mag"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "calocom",
+            "scopeName": "source.mag",
+            "path": "./syntaxes/calocom.tmLanguage.json"
+        }]
+    }
+}
