@@ -10,16 +10,93 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "calocom",
-            "aliases": ["Calocom", "calocom"],
-            "extensions": [".mag"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "calocom",
-            "scopeName": "source.mag",
-            "path": "./syntaxes/calocom.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "calocom",
+                "aliases": [
+                    "Calocom",
+                    "calocom"
+                ],
+                "extensions": [
+                    ".mag"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "calocom",
+                "scopeName": "source.mag",
+                "path": "./syntaxes/calocom.tmLanguage.json"
+            }
+        ],
+        "markdown.markdownItPlugins": true,
+        "commands": [
+            {
+                "command": "extension.helloWorld",
+                "title": "Hello World"
+            },
+            {
+                "command": "remark.sidePreview",
+                "title": "Show side preview",
+                "category": "menubar",
+                "icon": {
+                    "light": "./assets/refresh.svg",
+                    "dark": "./assets/refresh.svg"
+                }
+            },
+            {
+                "command": "remark.fullPreview",
+                "title": "Show full preview",
+                "category": "menubar",
+                "icon": {
+                    "light": "./assets/refresh.svg",
+                    "dark": "./assets/refresh.svg"
+                }
+            }
+        ],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "remark.sidePreview",
+					"alt": "remark.fullPreview",
+					"group": "navigation"
+				}
+			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "Remark Preview",
+			"properties": {
+				"remark.preview.scrollPreviewWithEditor": {
+					"type": "boolean",
+					"default": true,
+					"description": "Scroll preview window when you scroll Editor"
+				}
+			}
+		}
+    },
+    "activationEvents": [
+        "onLanguage:calocom"
+    ],
+    "main": "./out/extension.js",
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "lint": "eslint . --ext .ts,.tsx",
+        "watch": "tsc -watch -p ./"
+    },
+    "devDependencies": {
+        "@types/node": "^12.12.0",
+        "@types/vscode": "^1.34.0",
+        "@typescript-eslint/eslint-plugin": "^5.19.0",
+        "@typescript-eslint/parser": "^5.19.0",
+        "eslint": "^8.13.0",
+        "typescript": "^4.6.3"
+    },
+    "dependencies": {
+        "remark": "^14.0.2",
+        "remark-admonitions": "^1.2.1",
+        "remark-html": "^15.0.1"
     }
 }
