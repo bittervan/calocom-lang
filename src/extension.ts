@@ -24,20 +24,25 @@
 
 import * as vscode from 'vscode';
 // import admonitions from 'remark-admonitions';
-const admonitions = require('remark-admonitions')
-const html = require('remark-html');
-const remark = require('remark');
+// const admonitions = require('remark-admonitions')
+// const html = require('remark-html');
+// const remark = require('remark');
 // import * as remark from 'remark';
 import * as path from 'path';
+import { exec } from 'child_process';
+
+const CALOCOM_EXECUTABLE = "/home/bittervan/Courses/compiler/calocom/target/debug/calocom-compiler";
 
 
 export function activate(context: vscode.ExtensionContext) {
 
 
+
     // commandId
     const command = 'remark.sidePreview';
 
-    const disposableSidePreview = vscode.commands.registerCommand(command, async () => {
+    const disposableSidePreview = vscode.commands.registerCommand(command, () => {
+		// vscode.commands.executeCommand("mar")
         initMarkdownPreview(context);
     });
 
@@ -47,27 +52,84 @@ export function activate(context: vscode.ExtensionContext) {
 async function initMarkdownPreview(context: vscode.ExtensionContext) {
     const panel = vscode.window.createWebviewPanel(
         // Webview id
-        'liveHTMLPreviewer',
-        // Webview title
-        'Syntax Tree',
-        // This will open the second column for preview inside editor
-        2,
-        {
-            // Enable scripts in the webview
-            enableScripts: true,
-            retainContextWhenHidden: true,
-            // And restrict the webview to only loading content from our extension's `assets` directory.
-            localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'assets'))]
-        }
-    );
-    panel.webview.html = await markdownCompiler().process(vscode.window.activeTextEditor?.document.getText());
+    //     'liveHTMLPreviewer',
+    //     // Webview title
+    //     'Syntax Tree',
+    //     // This will open the second column for preview inside editor
+    //     2,
+		'mermaidPreview',
+		'Mermaid Preview',
+		vscode.ViewColumn.Two,
+		{
+			enableScripts: true,
+		}
+	);
+
+	// const fileName = vscode.workspace.textDocuments;
+	// let fileName = vscode.Uri.name;
+	const fileName = vscode.workspace.textDocuments[0].fileName;
+	console.log(fileName);
+	if (fileName) {
+		exec(CALOCOM_EXECUTABLE + " -v "+ fileName, async (_, out, err) => {
+			// console.log('in here');
+			// console.log(out);
+			// console.log('***');
+			// console.log(err);
+			panel.webview.html = out;
+		})	
+	}
+
+	vscode.window.onDidChangeTextEditorSelection(async (change) => {
+		// console.log(change.textEditor.document.fileName);
+		let fileName = (change.textEditor.document.fileName);
+		if (fileName.endsWith(".mag")) {
+			exec(CALOCOM_EXECUTABLE + " -v "+ fileName, async (_, out, err) => {
+				// console.log('***');
+				// console.log(out);
+				// console.log('***');
+				// console.log(err);
+				panel.webview.html = out;
+			})
+		}
+	})
+
+	vscode.workspace.onDidOpenTextDocument(async (document) => {
+		console.log(document.fileName);
+		if (document.fileName.endsWith(".mag")) {
+			exec(CALOCOM_EXECUTABLE + " -v "+ document.fileName, async (_, out, err) => {
+				// console.log('***');
+				// console.log(out);
+				// console.log('***');
+				// console.log(err);
+				panel.webview.html = out;
+			})
+		}
+	});
+
+	// vscode.workspace.onDidChangeTextDocument((change) => {
+	// 	// let a = change.document.fileName;
+	// 	// console.log(a);
+	// 	// console.log("changing file");
+	// });
+
+	vscode.workspace.onDidSaveTextDocument(async (document) => {
+		if (document.fileName.endsWith(".mag")) {
+			exec(CALOCOM_EXECUTABLE + " -v "+ document.fileName, async (_, out, err) => {
+				// console.log(out);
+				// console.log('***');
+				// console.log(err);
+				panel.webview.html = out;
+			})
+		}
+	});
+
 }
 
 function markdownCompiler(): any {
-    const admonitionsOptions = {};
-    return remark()
-        .use(html)
-        .use(admonitions, admonitionsOptions);
+    // const admonitionsOptions = {};
+    // return remark()
+    //     .use(html)
+    //     .use(admonitions, admonitionsOptions);
 }
 
 

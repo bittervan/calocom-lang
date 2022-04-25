@@ -38,11 +38,11 @@
             },
             {
                 "command": "remark.sidePreview",
-                "title": "Show side preview",
+                "title": "See Parse Tree",
                 "category": "menubar",
                 "icon": {
                     "light": "./assets/refresh.svg",
-                    "dark": "./assets/refresh.svg"
+                    "dark": "./assets/glasses.png"
                 }
             },
             {
@@ -51,7 +51,7 @@
                 "category": "menubar",
                 "icon": {
                     "light": "./assets/refresh.svg",
-                    "dark": "./assets/refresh.svg"
+                    "dark": "./assets/glasses.png"
                 }
             }
         ],
@@ -60,7 +60,8 @@
 				{
 					"command": "remark.sidePreview",
 					"alt": "remark.fullPreview",
-					"group": "navigation"
+					"group": "navigation",
+					"when": "editorLangId == calocom"
 				}
 			]
 		},
