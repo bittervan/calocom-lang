@@ -22,7 +22,8 @@ exports.deactivate = exports.activate = void 0;
 // }
 const vscode = require("vscode");
 const child_process_1 = require("child_process");
-const CALOCOM_EXECUTABLE = "/home/bittervan/Courses/compiler/calocom/target/debug/calocom-compiler";
+const fs = require("fs");
+const CALOCOM_EXECUTABLE = "/home/bittervan/Repos/calocom/target/debug/calocom-compiler";
 function activate(context) {
     // commandId
     const command = 'remark.sidePreview';
@@ -34,75 +35,44 @@ function activate(context) {
 }
 exports.activate = activate;
 async function initMarkdownPreview(context) {
-    const panel = vscode.window.createWebviewPanel(
-    // Webview id
-    //     'liveHTMLPreviewer',
-    //     // Webview title
-    //     'Syntax Tree',
-    //     // This will open the second column for preview inside editor
-    //     2,
-    'mermaidPreview', 'Mermaid Preview', vscode.ViewColumn.Two, {
+    const panel = vscode.window.createWebviewPanel('mermaidPreview', 'Mermaid Preview', vscode.ViewColumn.Two, {
         enableScripts: true,
     });
-    // const fileName = vscode.workspace.textDocuments;
-    // let fileName = vscode.Uri.name;
-    const fileName = vscode.workspace.textDocuments[0].fileName;
+    // const fileName = vscode.workspace.textDocuments[0].fileName;
+    const fileName = vscode.window.activeTextEditor?.document.fileName;
     console.log(fileName);
     if (fileName) {
-        (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -v " + fileName, async (_, out, err) => {
-            // console.log('in here');
-            // console.log(out);
-            // console.log('***');
-            // console.log(err);
+        (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -u " + fileName, async (_, out, err) => {
             panel.webview.html = out;
+            fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
         });
     }
     vscode.window.onDidChangeTextEditorSelection(async (change) => {
-        // console.log(change.textEditor.document.fileName);
         let fileName = (change.textEditor.document.fileName);
         if (fileName.endsWith(".mag")) {
-            (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -v " + fileName, async (_, out, err) => {
-                // console.log('***');
-                // console.log(out);
-                // console.log('***');
-                // console.log(err);
+            (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -u " + fileName, async (_, out, err) => {
                 panel.webview.html = out;
+                fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
             });
         }
     });
     vscode.workspace.onDidOpenTextDocument(async (document) => {
         console.log(document.fileName);
         if (document.fileName.endsWith(".mag")) {
-            (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -v " + document.fileName, async (_, out, err) => {
-                // console.log('***');
-                // console.log(out);
-                // console.log('***');
-                // console.log(err);
+            (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -u " + document.fileName, async (_, out, err) => {
                 panel.webview.html = out;
+                fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
             });
         }
     });
-    // vscode.workspace.onDidChangeTextDocument((change) => {
-    // 	// let a = change.document.fileName;
-    // 	// console.log(a);
-    // 	// console.log("changing file");
-    // });
     vscode.workspace.onDidSaveTextDocument(async (document) => {
         if (document.fileName.endsWith(".mag")) {
-            (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -v " + document.fileName, async (_, out, err) => {
-                // console.log(out);
-                // console.log('***');
-                // console.log(err);
+            (0, child_process_1.exec)(CALOCOM_EXECUTABLE + " -u " + document.fileName, async (_, out, err) => {
                 panel.webview.html = out;
+                fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
             });
         }
     });
-}
-function markdownCompiler() {
-    // const admonitionsOptions = {};
-    // return remark()
-    //     .use(html)
-    //     .use(admonitions, admonitionsOptions);
 }
 // this method is called when your extension is deactivated
 function deactivate() { }

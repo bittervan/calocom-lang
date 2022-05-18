@@ -30,8 +30,9 @@ import * as vscode from 'vscode';
 // import * as remark from 'remark';
 import * as path from 'path';
 import { exec } from 'child_process';
+import * as fs from "fs";
 
-const CALOCOM_EXECUTABLE = "/home/bittervan/Courses/compiler/calocom/target/debug/calocom-compiler";
+const CALOCOM_EXECUTABLE = "/home/bittervan/Repos/calocom/target/debug/calocom-compiler";
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -51,44 +52,30 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function initMarkdownPreview(context: vscode.ExtensionContext) {
     const panel = vscode.window.createWebviewPanel(
-        // Webview id
-    //     'liveHTMLPreviewer',
-    //     // Webview title
-    //     'Syntax Tree',
-    //     // This will open the second column for preview inside editor
-    //     2,
 		'mermaidPreview',
 		'Mermaid Preview',
-		vscode.ViewColumn.Two,
-		{
+		vscode.ViewColumn.Two, {
 			enableScripts: true,
 		}
 	);
 
-	// const fileName = vscode.workspace.textDocuments;
-	// let fileName = vscode.Uri.name;
-	const fileName = vscode.workspace.textDocuments[0].fileName;
+
+	// const fileName = vscode.workspace.textDocuments[0].fileName;
+    const fileName = vscode.window.activeTextEditor?.document.fileName;
 	console.log(fileName);
 	if (fileName) {
-		exec(CALOCOM_EXECUTABLE + " -v "+ fileName, async (_, out, err) => {
-			// console.log('in here');
-			// console.log(out);
-			// console.log('***');
-			// console.log(err);
+		exec(CALOCOM_EXECUTABLE + " -u "+ fileName, async (_, out, err) => {
 			panel.webview.html = out;
+            fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
 		})	
 	}
 
 	vscode.window.onDidChangeTextEditorSelection(async (change) => {
-		// console.log(change.textEditor.document.fileName);
 		let fileName = (change.textEditor.document.fileName);
 		if (fileName.endsWith(".mag")) {
-			exec(CALOCOM_EXECUTABLE + " -v "+ fileName, async (_, out, err) => {
-				// console.log('***');
-				// console.log(out);
-				// console.log('***');
-				// console.log(err);
+			exec(CALOCOM_EXECUTABLE + " -u "+ fileName, async (_, out, err) => {
 				panel.webview.html = out;
+                fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
 			})
 		}
 	})
@@ -96,43 +83,23 @@ async function initMarkdownPreview(context: vscode.ExtensionContext) {
 	vscode.workspace.onDidOpenTextDocument(async (document) => {
 		console.log(document.fileName);
 		if (document.fileName.endsWith(".mag")) {
-			exec(CALOCOM_EXECUTABLE + " -v "+ document.fileName, async (_, out, err) => {
-				// console.log('***');
-				// console.log(out);
-				// console.log('***');
-				// console.log(err);
+			exec(CALOCOM_EXECUTABLE + " -u "+ document.fileName, async (_, out, err) => {
 				panel.webview.html = out;
+                fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
 			})
 		}
 	});
-
-	// vscode.workspace.onDidChangeTextDocument((change) => {
-	// 	// let a = change.document.fileName;
-	// 	// console.log(a);
-	// 	// console.log("changing file");
-	// });
 
 	vscode.workspace.onDidSaveTextDocument(async (document) => {
 		if (document.fileName.endsWith(".mag")) {
-			exec(CALOCOM_EXECUTABLE + " -v "+ document.fileName, async (_, out, err) => {
-				// console.log(out);
-				// console.log('***');
-				// console.log(err);
+			exec(CALOCOM_EXECUTABLE + " -u "+ document.fileName, async (_, out, err) => {
 				panel.webview.html = out;
+                fs.writeFileSync("/home/bittervan/Downloads/test.html", out);
 			})
 		}
 	});
 
 }
-
-function markdownCompiler(): any {
-    // const admonitionsOptions = {};
-    // return remark()
-    //     .use(html)
-    //     .use(admonitions, admonitionsOptions);
-}
-
-
 
 // this method is called when your extension is deactivated
 export function deactivate() { }

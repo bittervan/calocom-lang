@@ -5,17 +5,29 @@
 {
 	"version": "0.2.0",
     "configurations": [
-		{
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"name": "Launch Extension",
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			],
-			"preLaunchTask": "npm: compile",
-			"request": "launch",
-			"type": "extensionHost"
-		},
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm: compile",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
+            "type": "pwa-chrome",
+            "name": "localhost:3000",
+            "request": "launch",
+            "url": "localhost:3000"
+        },
+        {
+            "type": "pwa-chrome",
+            "name": "localhost:12341",
+            "request": "launch",
+            "url": "localhost:12341"
+        }
     ]
 }
